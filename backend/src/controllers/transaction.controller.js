@@ -6,10 +6,14 @@ const getTransactions = async (req, res) => {
 
         const result = await pool.query(
             `
-             SELECT *
+             SELECT
+                transactions.*,
+                categories.name AS category_name
              FROM transactions
-             WHERE user_id = $1
-             ORDER BY date DESC, created_at DESC
+             JOIN categories
+                ON transactions.category_id = categories.id
+             WHERE transactions.user_id = $1
+             ORDER BY transactions.date DESC, transactions.created_at DESC
             `,
             [userId]
         );
@@ -31,12 +35,12 @@ const createTransaction = async (req, res) => {
         const {
             amount,
             type,
-            category,
+            categoryId,
             description,
             date,
         } = req.body;
 
-        if (!amount || !type || !category || !date) {
+        if (!amount || !type || !categoryId || !date) {
             return res.status(400).json({
                 message: "Amount, type, category, and date are required",
             });
@@ -51,12 +55,12 @@ const createTransaction = async (req, res) => {
         const result = await pool.query(
             `
              INSERT INTO transactions
-             (user_id, amount, type, category, description, date)
+             (user_id, amount, type, category_id, description, date)
              VALUES
              ($1, $2, $3, $4, $5, $6)
              RETURNING *
             `,
-            [userId, amount, type, category, description || null, date]
+            [userId, amount, type, categoryId, description || null, date]
         );
 
         res.status(201).json({
@@ -81,12 +85,12 @@ const updateTransaction = async (req, res) => {
         const {
             amount,
             type,
-            category,
+            categoryId,
             description,
             date,
         } = req.body;
 
-        if (!amount || !type || !category || !date) {
+        if (!amount || !type || !categoryId || !date) {
             return res.status(400).json({
                 message: "Amount, type, category, and date are required",
             });
@@ -104,7 +108,7 @@ const updateTransaction = async (req, res) => {
              SET
              amount = $1,
              type = $2,
-             category = $3,
+             category_id = $3,
              description = $4,
              date = $5
              WHERE id = $6 AND user_id = $7
@@ -113,7 +117,7 @@ const updateTransaction = async (req, res) => {
             [
                 amount,
                 type,
-                category,
+                categoryId,
                 description || null,
                 date,
                 transactionId,

@@ -1,4 +1,5 @@
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const pool = require("../config/db");
 
 const registerUser = async (req, res) => {
@@ -78,8 +79,15 @@ const loginUser = async (req, res) => {
             });
         }
 
+        const token = jwt.sign(
+            { userId: user.id },
+            process.env.JWT_SECRET,
+            { expiresIn: "1d" }
+        );
+
         res.json({
             message: "Login successful",
+            token,
             user: {
                 id: user.id,
                 name: user.name,

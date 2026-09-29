@@ -1,6 +1,7 @@
 const express = require("express");
 const pool = require("./config/db");
 const authRoutes = require("./routes/auth.routes");
+const transactionRoutes = require("./routes/transaction.routes");
 
 const app = express();
 
@@ -9,6 +10,7 @@ const PORT = 5000;
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
+app.use("/api/transactions", transactionRoutes);
 
 app.get("/", (req, res) => {
   res.send("Personal Finance Tracker API is running");

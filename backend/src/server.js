@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const pool = require("./config/db");
 const authRoutes = require("./routes/auth.routes");
 const transactionRoutes = require("./routes/transaction.routes");
@@ -6,6 +7,8 @@ const categoryRoutes = require("./routes/category.routes");
 const dashboardRoutes = require("./routes/dashboard.routes");
 
 const app = express();
+
+app.use(cors());
 
 const PORT = 5000;
 

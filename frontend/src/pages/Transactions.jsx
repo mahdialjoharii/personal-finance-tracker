@@ -1,0 +1,248 @@
+import { useEffect, useState } from "react";
+import {
+    getTransactions,
+    getCategories,
+    getIncomeSources,
+} from "../services/api";
+import Navbar from "../components/Navbar";
+import "./Transactions.css";
+
+function Transactions() {
+    const [transactions, setTransactions] = useState([]);
+    const [showForm, setShowForm] = useState(false);
+    const [type, setType] = useState("EXPENSE");
+    const [amount, setAmount] = useState("");
+    const [categories, setCategories] = useState([]);
+    const [incomeSources, setIncomeSources] = useState([]);
+    const [categoryId, setCategoryId] = useState("");
+    const [incomeSource, setIncomeSource] = useState("");
+    const [description, setDescription] = useState("");
+    const [date, setDate] = useState("");
+
+    useEffect(() => {
+        const loadTransactions = async () => {
+            try {
+                const data = await getTransactions();
+
+                console.log("Transactions data:", data);
+
+                setTransactions(data);
+            } catch (error) {
+                console.error("Transactions error:", error);
+            }
+        };
+
+        loadTransactions();
+
+        const loadCategories = async () => {
+            try {
+                const data = await getCategories();
+
+                console.log("Categories data:", data);
+
+                setCategories(data);
+            } catch (error) {
+                console.error("Categories error:", error);
+            }
+        };
+
+        loadCategories();
+
+        const loadIncomeSources = async () => {
+            try {
+                const data = await getIncomeSources();
+
+                console.log("Income sources data:", data);
+
+                setIncomeSources(data);
+            } catch (error) {
+                console.error("Income sources error:", error);
+            }
+        };
+
+        loadIncomeSources();
+    }, []);
+
+    return (
+        <main className="transactions-page">
+            <Navbar />
+
+            <header className="transactions-header">
+                <div className="transactions-header-content">
+                    <h1>Transactions</h1>
+                    <p>Manage your income and expenses.</p>
+                </div>
+
+                <button
+                    className="add-transaction-button"
+                    onClick={() => setShowForm(true)}
+                >
+                    <span>+</span>
+                    Add Transaction
+                </button>
+            </header>
+
+            {showForm && (
+                <div className="transaction-form-card">
+                    <div className="transaction-form-header">
+                        <div>
+                            <span>
+                                {type === "EXPENSE" ? "NEW EXPENSE" : "NEW INCOME"}
+                            </span>
+
+                            <h2>
+                                {type === "EXPENSE" ? "Add Expense" : "Add Income"}
+                            </h2>
+
+                            <p>
+                                {type === "EXPENSE"
+                                    ? "Record an expense from your account."
+                                    : "Record money coming into your account."}
+                            </p>
+                        </div>
+
+                        <button
+                            type="button"
+                            className="transaction-form-close"
+                            onClick={() => setShowForm(false)}
+                        >
+                            ×
+                        </button>
+                    </div>
+
+                    <div className="transaction-type">
+                        <button
+                            type="button"
+                            className={type === "EXPENSE" ? "active" : ""}
+                            onClick={() => setType("EXPENSE")}
+                        >
+                            Expense
+                        </button>
+
+                        <button
+                            type="button"
+                            className={type === "INCOME" ? "active" : ""}
+                            onClick={() => setType("INCOME")}
+                        >
+                            Income
+                        </button>
+                    </div>
+
+                    <div className="transaction-form-field">
+                        <label htmlFor="amount">Amount</label>
+
+                        <div className="amount-input">
+                            <span>$</span>
+
+                            <input
+                                id="amount"
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                placeholder="0.00"
+                                value={amount}
+                                onChange={(event) => setAmount(event.target.value)}
+                            />
+                        </div>
+                    </div>
+
+                    {type === "EXPENSE" ? (
+                        <div className="transaction-form-field">
+                            <label htmlFor="category">Category</label>
+
+                            <select
+                                id="category"
+                                value={categoryId}
+                                onChange={(event) => setCategoryId(event.target.value)}
+                            >
+                                <option value="">Select a category</option>
+
+                                {categories.map((category) => (
+                                    <option key={category.id} value={category.id}>
+                                        {category.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    ) : (
+                        <div className="transaction-form-field">
+                            <label htmlFor="incomeSource">Source</label>
+
+                            <select
+                                id="incomeSource"
+                                value={incomeSource}
+                                onChange={(event) => setIncomeSource(event.target.value)}
+                            >
+                                <option value="">Select a source</option>
+
+                                {incomeSources.map((source) => (
+                                    <option key={source.id} value={source.id}>
+                                        {source.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
+
+                    <div className="transaction-form-field">
+                        <label htmlFor="description">Description</label>
+
+                        <input
+                            id="description"
+                            type="text"
+                            placeholder="e.g. Monthly rent"
+                            value={description}
+                            onChange={(event) => setDescription(event.target.value)}
+                        />
+                    </div>
+
+                    <div className="transaction-form-field">
+                        <label htmlFor="date">Date</label>
+
+                        <input
+                            id="date"
+                            type="date"
+                            value={date}
+                            onChange={(event) => setDate(event.target.value)}
+                        />
+                    </div>
+
+                    <button
+                        type="button"
+                        className="transaction-submit-button"
+                    >
+                        {type === "EXPENSE" ? "Add Expense" : "Add Income"}
+                    </button>
+
+                </div>
+            )}
+
+            <section className="transactions-list">
+                {transactions.map((transaction) => (
+                    <article className="transaction-card" key={transaction.id}>
+                        <span className="transaction-description">
+                            {transaction.description || "No description"}
+                        </span>
+
+                        <span className="transaction-category">
+                            {transaction.category_name}
+                        </span>
+
+                        <span className="transaction-date">
+                            {transaction.date}
+                        </span>
+
+                        <span
+                            className={`transaction-amount ${transaction.type === "INCOME" ? "income" : "expense"
+                                }`}
+                        >
+                            {transaction.type === "INCOME" ? "+" : "-"}${transaction.amount}
+                        </span>
+                    </article>
+                ))}
+            </section>
+        </main>
+    );
+}
+
+export default Transactions;

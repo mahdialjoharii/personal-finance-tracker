@@ -75,3 +75,26 @@
         display: none;
     }
 }
+
+.navbar-links {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+}
+
+.navbar-links a {
+    color: #74847f;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+
+    transition: color 0.2s ease;
+}
+
+.navbar-links a:hover {
+    color: #f5f7f6;
+}
+
+.navbar-links a.active {
+  color: #20d9a4;
+}

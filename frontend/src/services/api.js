@@ -44,3 +44,48 @@ export const getDashboard = async () => {
 
     return data;
 };
+
+export const getTransactions = async () => {
+    const response = await fetch(`${API_URL}/transactions`, {
+        method: "GET",
+        headers: getAuthHeaders(),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || "Failed to fetch transactions");
+    }
+
+    return data;
+};
+
+export const getCategories = async () => {
+    const response = await fetch(`${API_URL}/categories`, {
+        method: "GET",
+        headers: getAuthHeaders(),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || "Failed to fetch categories");
+    }
+
+    return data;
+};
+
+export const getIncomeSources = async () => {
+    const response = await fetch(`${API_URL}/income-sources`, {
+        method: "GET",
+        headers: getAuthHeaders(),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || "Failed to fetch income sources");
+    }
+
+    return data;
+};

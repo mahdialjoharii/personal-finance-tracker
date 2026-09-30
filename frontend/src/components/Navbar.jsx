@@ -1,7 +1,9 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import "./Navbar.css";
 
 function Navbar() {
+    const location = useLocation();
+
     const user = JSON.parse(localStorage.getItem("user"));
 
     const handleLogout = () => {
@@ -17,6 +19,22 @@ function Navbar() {
                 <span className="navbar-logo">PF</span>
                 <span>Finance</span>
             </Link>
+
+            <div className="navbar-links">
+                <Link
+                    to="/dashboard"
+                    className={location.pathname === "/dashboard" ? "active" : ""}
+                >
+                    Dashboard
+                </Link>
+
+                <Link
+                    to="/transactions"
+                    className={location.pathname === "/transactions" ? "active" : ""}
+                >
+                    Transactions
+                </Link>
+            </div>
 
             <div className="navbar-user">
                 <span>{user?.name}</span>

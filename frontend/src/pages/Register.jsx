@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./Register.css";
 import { registerUser } from "../services/api";
 
@@ -10,16 +10,29 @@ function Register() {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
+    const navigate = useNavigate();
+
     const handleSubmit = async (event) => {
         event.preventDefault();
 
         setError("");
-        setLoading(true);
 
+        if (!name || !email || !password) {
+            setError("Name, email, and password are required.");
+            return;
+        }
+
+        setLoading(true);
         try {
             const data = await registerUser(name, email, password);
 
             console.log("Registration successful:", data);
+
+            navigate("/login", {
+                state: {
+                    success: "Account created successfully. You can now sign in.",
+                },
+            });
         } catch (error) {
             setError(error.message);
         } finally {

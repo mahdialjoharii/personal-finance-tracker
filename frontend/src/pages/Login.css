@@ -291,3 +291,26 @@
 .login-register-link a:hover {
     color: #f5f7f6;
 }
+
+.login-success {
+    margin: -4px 0 16px;
+
+    color: #20d9a4;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.login-error {
+    margin: -4px 0 16px;
+
+    padding: 10px 12px;
+
+    border: 1px solid rgba(255, 123, 138, 0.16);
+    border-radius: 8px;
+
+    background: rgba(255, 123, 138, 0.06);
+
+    color: #ff7b8a;
+    font-size: 13px;
+    line-height: 1.5;
+}

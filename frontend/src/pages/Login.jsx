@@ -1,20 +1,33 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import "./Login.css";
 import { loginUser } from "../services/api";
 
 function Login() {
+    const location = useLocation();
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
+    const [successMessage, setSuccessMessage] = useState(
+        location.state?.success || ""
+    );
+
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        setError("");
-        setLoading(true);
+        setSuccessMessage("");
 
+        setError("");
+
+        if (!email || !password) {
+            setError("Email and password are required.");
+            return;
+        }
+
+        setLoading(true);
         try {
             const data = await loginUser(email, password);
 
@@ -82,6 +95,10 @@ function Login() {
                                 onChange={(event) => setPassword(event.target.value)}
                             />
                         </div>
+
+                        {successMessage && (
+                            <p className="login-success">{successMessage}</p>
+                        )}
 
                         {error && <p className="login-error">{error}</p>}
 

@@ -89,3 +89,33 @@ export const getIncomeSources = async () => {
 
     return data;
 };
+
+export const createTransaction = async ({
+    amount,
+    type,
+    categoryId,
+    incomeSourceId,
+    description,
+    date,
+}) => {
+    const response = await fetch(`${API_URL}/transactions`, {
+        method: "POST",
+        headers: getAuthHeaders(),
+        body: JSON.stringify({
+            amount,
+            type,
+            categoryId,
+            incomeSourceId,
+            description,
+            date,
+        }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || "Failed to create transaction");
+    }
+
+    return data;
+};

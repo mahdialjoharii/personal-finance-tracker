@@ -3,6 +3,7 @@ import {
     getTransactions,
     getCategories,
     getIncomeSources,
+    createTransaction,
 } from "../services/api";
 import Navbar from "../components/Navbar";
 import "./Transactions.css";
@@ -19,12 +20,37 @@ function Transactions() {
     const [description, setDescription] = useState("");
     const [date, setDate] = useState("");
 
+    const handleSubmit = async () => {
+        try {
+            const data = await createTransaction({
+                amount: Number(amount),
+                type,
+                categoryId: type === "EXPENSE" ? Number(categoryId) : null,
+                incomeSourceId: type === "INCOME" ? Number(incomeSource) : null,
+                description,
+                date,
+            });
+
+            console.log("Transaction created:", data);
+
+            setTransactions((prev) =>
+                [...prev, data.transaction].sort((a, b) => {
+                    return b.date.localeCompare(a.date);
+                })
+            );
+
+        } catch (error) {
+            console.error("Create transaction error:", error);
+        }
+    };
+
     useEffect(() => {
         const loadTransactions = async () => {
             try {
                 const data = await getTransactions();
 
                 console.log("Transactions data:", data);
+                console.log("First transaction date:", data[0]?.date);
 
                 setTransactions(data);
             } catch (error) {
@@ -210,6 +236,7 @@ function Transactions() {
                     <button
                         type="button"
                         className="transaction-submit-button"
+                        onClick={handleSubmit}
                     >
                         {type === "EXPENSE" ? "Add Expense" : "Add Income"}
                     </button>
@@ -225,7 +252,9 @@ function Transactions() {
                         </span>
 
                         <span className="transaction-category">
-                            {transaction.category_name}
+                            {transaction.type === "INCOME"
+                                ? transaction.income_source_name
+                                : transaction.category_name}
                         </span>
 
                         <span className="transaction-date">

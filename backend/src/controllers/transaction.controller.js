@@ -6,14 +6,25 @@ const getTransactions = async (req, res) => {
 
         const result = await pool.query(
             `
-             SELECT
-                transactions.*,
-                categories.name AS category_name
-             FROM transactions
-             JOIN categories
+              SELECT
+                transactions.id,
+                transactions.user_id,
+                transactions.amount,
+                transactions.type,
+                transactions.category_id,
+                transactions.income_source_id,
+                transactions.description,
+                TO_CHAR(transactions.date, 'YYYY-MM-DD') AS date,
+                transactions.created_at,
+                categories.name AS category_name,
+                income_sources.name AS income_source_name
+              FROM transactions
+              LEFT JOIN categories
                 ON transactions.category_id = categories.id
-             WHERE transactions.user_id = $1
-             ORDER BY transactions.date DESC, transactions.created_at DESC
+              LEFT JOIN income_sources
+                ON transactions.income_source_id = income_sources.id
+              WHERE transactions.user_id = $1
+              ORDER BY transactions.date DESC, transactions.created_at DESC
             `,
             [userId]
         );
@@ -36,13 +47,14 @@ const createTransaction = async (req, res) => {
             amount,
             type,
             categoryId,
+            incomeSourceId,
             description,
             date,
         } = req.body;
 
-        if (!amount || !type || !categoryId || !date) {
+        if (!amount || !type || !date) {
             return res.status(400).json({
-                message: "Amount, type, category, and date are required",
+                message: "Amount, type, and date are required",
             });
         }
 
@@ -52,15 +64,43 @@ const createTransaction = async (req, res) => {
             });
         }
 
+        if (type === "EXPENSE" && !categoryId) {
+            return res.status(400).json({
+                message: "Category is required for expenses",
+            });
+        }
+
+        if (type === "INCOME" && !incomeSourceId) {
+            return res.status(400).json({
+                message: "Income source is required for income",
+            });
+        }
+
         const result = await pool.query(
             `
-             INSERT INTO transactions
-             (user_id, amount, type, category_id, description, date)
-             VALUES
-             ($1, $2, $3, $4, $5, $6)
-             RETURNING *
+              INSERT INTO transactions
+                (
+                 user_id,
+                 amount,
+                 type,
+                 category_id,
+                 income_source_id,
+                 description,
+                 date
+                )
+              VALUES
+                ($1, $2, $3, $4, $5, $6, $7)
+              RETURNING *
             `,
-            [userId, amount, type, categoryId, description || null, date]
+            [
+                userId,
+                amount,
+                type,
+                type === "EXPENSE" ? categoryId : null,
+                type === "INCOME" ? incomeSourceId : null,
+                description || null,
+                date,
+            ]
         );
 
         res.status(201).json({

@@ -126,13 +126,14 @@ const updateTransaction = async (req, res) => {
             amount,
             type,
             categoryId,
+            incomeSourceId,
             description,
             date,
         } = req.body;
 
-        if (!amount || !type || !categoryId || !date) {
+        if (!amount || !type || !date) {
             return res.status(400).json({
-                message: "Amount, type, category, and date are required",
+                message: "Amount, type, and date are required",
             });
         }
 
@@ -142,22 +143,45 @@ const updateTransaction = async (req, res) => {
             });
         }
 
+        if (type === "EXPENSE" && !categoryId) {
+            return res.status(400).json({
+                message: "Category is required for expenses",
+            });
+        }
+
+        if (type === "INCOME" && !incomeSourceId) {
+            return res.status(400).json({
+                message: "Income source is required for income",
+            });
+        }
+
         const result = await pool.query(
             `
-             UPDATE transactions
-             SET
-             amount = $1,
-             type = $2,
-             category_id = $3,
-             description = $4,
-             date = $5
-             WHERE id = $6 AND user_id = $7
-             RETURNING *
+              UPDATE transactions
+              SET
+              amount = $1,
+              type = $2,
+              category_id = $3,
+              income_source_id = $4,
+              description = $5,
+              date = $6
+              WHERE id = $7 AND user_id = $8
+              RETURNING
+                id,
+                user_id,
+                amount,
+                type,
+                category_id,
+                income_source_id,
+                description,
+                TO_CHAR(date, 'YYYY-MM-DD') AS date,
+                created_at
             `,
             [
                 amount,
                 type,
-                categoryId,
+                type === "EXPENSE" ? categoryId : null,
+                type === "INCOME" ? incomeSourceId : null,
                 description || null,
                 date,
                 transactionId,

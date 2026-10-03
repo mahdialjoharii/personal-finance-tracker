@@ -4,6 +4,7 @@ import {
     getCategories,
     getIncomeSources,
     createTransaction,
+    updateTransaction,
     deleteTransaction,
 } from "../services/api";
 import Navbar from "../components/Navbar";
@@ -18,31 +19,78 @@ function Transactions() {
     const [incomeSources, setIncomeSources] = useState([]);
     const [categoryId, setCategoryId] = useState("");
     const [incomeSource, setIncomeSource] = useState("");
+    const [editingTransaction, setEditingTransaction] = useState(null);
     const [description, setDescription] = useState("");
     const [date, setDate] = useState("");
 
     const handleSubmit = async () => {
         try {
-            const data = await createTransaction({
+            const transactionData = {
                 amount: Number(amount),
                 type,
                 categoryId: type === "EXPENSE" ? Number(categoryId) : null,
-                incomeSourceId: type === "INCOME" ? Number(incomeSource) : null,
+                incomeSourceId:
+                    type === "INCOME" ? Number(incomeSource) : null,
                 description,
                 date,
-            });
+            };
 
-            console.log("Transaction created:", data);
+            if (editingTransaction) {
+                const data = await updateTransaction(
+                    editingTransaction.id,
+                    transactionData
+                );
 
-            setTransactions((prev) =>
-                [...prev, data.transaction].sort((a, b) => {
-                    return b.date.localeCompare(a.date);
-                })
-            );
+                console.log("Transaction updated:", data);
+
+                const updatedTransactions = await getTransactions();
+
+                setTransactions(
+                    updatedTransactions.sort((a, b) => {
+                        return b.date.localeCompare(a.date);
+                    })
+                );
+            } else {
+                const data = await createTransaction(transactionData);
+
+                console.log("Transaction created:", data);
+
+                setTransactions((prev) =>
+                    [...prev, data.transaction].sort((a, b) => {
+                        return b.date.localeCompare(a.date);
+                    })
+                );
+            }
+
+            setEditingTransaction(null);
+            setShowForm(false);
 
         } catch (error) {
-            console.error("Create transaction error:", error);
+            console.error("Save transaction error:", error);
         }
+    };
+
+    const resetTransactionForm = () => {
+        setAmount("");
+        setType("EXPENSE");
+        setCategoryId("");
+        setIncomeSource("");
+        setDescription("");
+        setDate(new Date().toISOString().split("T")[0]);
+        setEditingTransaction(null);
+    };
+
+    const handleEdit = (transaction) => {
+        setEditingTransaction(transaction);
+
+        setAmount(transaction.amount);
+        setType(transaction.type);
+        setCategoryId(transaction.category_id || "");
+        setIncomeSource(transaction.income_source_id || "");
+        setDescription(transaction.description || "");
+        setDate(transaction.date);
+
+        setShowForm(true);
     };
 
     const handleDelete = async (id) => {
@@ -124,7 +172,10 @@ function Transactions() {
 
                 <button
                     className="add-transaction-button"
-                    onClick={() => setShowForm(true)}
+                    onClick={() => {
+                        resetTransactionForm();
+                        setShowForm(true);
+                    }}
                 >
                     <span>+</span>
                     Add Transaction
@@ -153,7 +204,10 @@ function Transactions() {
                         <button
                             type="button"
                             className="transaction-form-close"
-                            onClick={() => setShowForm(false)}
+                            onClick={() => {
+                                resetTransactionForm();
+                                setShowForm(false);
+                            }}
                         >
                             ×
                         </button>
@@ -261,7 +315,11 @@ function Transactions() {
                         className="transaction-submit-button"
                         onClick={handleSubmit}
                     >
-                        {type === "EXPENSE" ? "Add Expense" : "Add Income"}
+                        {editingTransaction
+                            ? "Update Transaction"
+                            : type === "EXPENSE"
+                                ? "Add Expense"
+                                : "Add Income"}
                     </button>
 
                 </div>
@@ -290,6 +348,14 @@ function Transactions() {
                         >
                             {transaction.type === "INCOME" ? "+" : "-"}${transaction.amount}
                         </span>
+
+                        <button
+                            type="button"
+                            className="transaction-edit-button"
+                            onClick={() => handleEdit(transaction)}
+                        >
+                            Edit
+                        </button>
 
                         <button
                             type="button"

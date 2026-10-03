@@ -270,3 +270,24 @@
         font-size: 16px;
     }
 }
+
+.login-register-link {
+    margin: 20px 0 0;
+
+    text-align: center;
+
+    color: #74847f;
+    font-size: 13px;
+}
+
+.login-register-link a {
+    color: #20d9a4;
+    text-decoration: none;
+    font-weight: 700;
+
+    transition: color 0.2s ease;
+}
+
+.login-register-link a:hover {
+    color: #f5f7f6;
+}

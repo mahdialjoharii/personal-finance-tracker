@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import "./Login.css";
 import { loginUser } from "../services/api";
 
@@ -94,6 +95,11 @@ function Login() {
                             {!loading && <span>→</span>}
                         </button>
                     </form>
+
+                    <p className="login-register-link">
+                        Don't have an account?{" "}
+                        <Link to="/register">Create account</Link>
+                    </p>
                 </div>
             </section>
         </main>

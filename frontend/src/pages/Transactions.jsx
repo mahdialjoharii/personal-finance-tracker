@@ -22,8 +22,31 @@ function Transactions() {
     const [editingTransaction, setEditingTransaction] = useState(null);
     const [description, setDescription] = useState("");
     const [date, setDate] = useState("");
+    const [error, setError] = useState("");
 
     const handleSubmit = async () => {
+        setError("");
+
+        if (!amount || Number(amount) <= 0) {
+            setError("Please enter a valid amount.");
+            return;
+        }
+
+        if (!date) {
+            setError("Please select a date.");
+            return;
+        }
+
+        if (type === "EXPENSE" && !categoryId) {
+            setError("Please select a category.");
+            return;
+        }
+
+        if (type === "INCOME" && !incomeSource) {
+            setError("Please select an income source.");
+            return;
+        }
+
         try {
             const transactionData = {
                 amount: Number(amount),
@@ -67,6 +90,8 @@ function Transactions() {
 
         } catch (error) {
             console.error("Save transaction error:", error);
+
+            setError(error.message);
         }
     };
 
@@ -187,11 +212,19 @@ function Transactions() {
                     <div className="transaction-form-header">
                         <div>
                             <span>
-                                {type === "EXPENSE" ? "NEW EXPENSE" : "NEW INCOME"}
+                                {editingTransaction
+                                    ? "EDIT TRANSACTION"
+                                    : type === "EXPENSE"
+                                        ? "NEW EXPENSE"
+                                        : "NEW INCOME"}
                             </span>
 
                             <h2>
-                                {type === "EXPENSE" ? "Add Expense" : "Add Income"}
+                                {editingTransaction
+                                    ? "Edit Transaction"
+                                    : type === "EXPENSE"
+                                        ? "Add Expense"
+                                        : "Add Income"}
                             </h2>
 
                             <p>
@@ -213,11 +246,21 @@ function Transactions() {
                         </button>
                     </div>
 
+                    {error && (
+                        <div className="transaction-error">
+                            {error}
+                        </div>
+                    )}
+
                     <div className="transaction-type">
                         <button
                             type="button"
                             className={type === "EXPENSE" ? "active" : ""}
-                            onClick={() => setType("EXPENSE")}
+                            onClick={() => {
+                                setType("EXPENSE");
+                                setIncomeSource("");
+                                setError("");
+                            }}
                         >
                             Expense
                         </button>
@@ -225,7 +268,11 @@ function Transactions() {
                         <button
                             type="button"
                             className={type === "INCOME" ? "active" : ""}
-                            onClick={() => setType("INCOME")}
+                            onClick={() => {
+                                setType("INCOME");
+                                setCategoryId("");
+                                setError("");
+                            }}
                         >
                             Income
                         </button>
@@ -244,7 +291,10 @@ function Transactions() {
                                 step="0.01"
                                 placeholder="0.00"
                                 value={amount}
-                                onChange={(event) => setAmount(event.target.value)}
+                                onChange={(event) => {
+                                    setAmount(event.target.value);
+                                    setError("");
+                                }}
                             />
                         </div>
                     </div>
@@ -256,7 +306,10 @@ function Transactions() {
                             <select
                                 id="category"
                                 value={categoryId}
-                                onChange={(event) => setCategoryId(event.target.value)}
+                                onChange={(event) => {
+                                    setCategoryId(event.target.value);
+                                    setError("");
+                                }}
                             >
                                 <option value="">Select a category</option>
 
@@ -274,7 +327,10 @@ function Transactions() {
                             <select
                                 id="incomeSource"
                                 value={incomeSource}
-                                onChange={(event) => setIncomeSource(event.target.value)}
+                                onChange={(event) => {
+                                    setIncomeSource(event.target.value);
+                                    setError("");
+                                }}
                             >
                                 <option value="">Select a source</option>
 
@@ -306,7 +362,10 @@ function Transactions() {
                             id="date"
                             type="date"
                             value={date}
-                            onChange={(event) => setDate(event.target.value)}
+                            onChange={(event) => {
+                                setDate(event.target.value);
+                                setError("");
+                            }}
                         />
                     </div>
 

@@ -551,3 +551,17 @@
 .transaction-edit-button:active {
     transform: translateY(0);
 }
+
+.transaction-error {
+    margin-top: 18px;
+    padding: 12px 14px;
+
+    border: 1px solid rgba(255, 123, 138, 0.2);
+    border-radius: 12px;
+
+    background: rgba(255, 123, 138, 0.06);
+    color: #ff7b8a;
+
+    font-size: 13px;
+    font-weight: 600;
+}

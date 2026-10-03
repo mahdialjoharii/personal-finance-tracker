@@ -230,6 +230,51 @@ function Dashboard() {
                             </div>
                         </section>
                     </div>
+
+                    <section className="recent-transactions-card">
+                        <div className="recent-transactions-header">
+                            <div>
+                                <span className="dashboard-chart-eyebrow">
+                                    RECENT ACTIVITY
+                                </span>
+
+                                <h2>Recent Transactions</h2>
+
+                                <p>Your latest income and expenses.</p>
+                            </div>
+                        </div>
+
+                        <div className="recent-transactions-list">
+                            {dashboard.recentTransactions.map((transaction) => (
+                                <div
+                                    className="recent-transaction"
+                                    key={transaction.id}
+                                >
+                                    <div className="recent-transaction-info">
+                                        <div className="recent-transaction-name">
+                                            {transaction.type === "EXPENSE"
+                                                ? transaction.category_name
+                                                : transaction.income_source_name}
+                                        </div>
+
+                                        <div className="recent-transaction-date">
+                                            {transaction.date}
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        className={`recent-transaction-amount ${transaction.type === "INCOME"
+                                                ? "income"
+                                                : "expense"
+                                            }`}
+                                    >
+                                        {transaction.type === "INCOME" ? "+" : "-"}$
+                                        {transaction.amount}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
                 </>
             )}
         </main>

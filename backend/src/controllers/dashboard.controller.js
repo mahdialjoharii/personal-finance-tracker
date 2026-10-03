@@ -56,12 +56,35 @@ const getDashboard = async (req, res) => {
             [userId]
         );
 
+        const recentTransactionsResult = await pool.query(
+            `
+              SELECT
+               transactions.id,
+               transactions.amount,
+               transactions.type,
+               transactions.description,
+               TO_CHAR(transactions.date, 'YYYY-MM-DD') AS date,
+               categories.name AS category_name,
+               income_sources.name AS income_source_name
+              FROM transactions
+              LEFT JOIN categories
+               ON transactions.category_id = categories.id
+              LEFT JOIN income_sources
+               ON transactions.income_source_id = income_sources.id
+              WHERE transactions.user_id = $1
+              ORDER BY transactions.date DESC, transactions.created_at DESC
+              LIMIT 5
+            `,
+            [userId]
+        );
+
         res.json({
             totalIncome,
             totalExpenses,
             balance,
             monthlySummary: monthlyResult.rows,
             expensesByCategory: categoryResult.rows,
+            recentTransactions: recentTransactionsResult.rows,
         });
     } catch (error) {
         console.error("Get dashboard error:", error.message);

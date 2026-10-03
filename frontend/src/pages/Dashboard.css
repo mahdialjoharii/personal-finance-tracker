@@ -88,6 +88,18 @@
     .dashboard-charts-grid {
         grid-template-columns: 1fr;
     }
+
+    .recent-transactions-card {
+        padding: 22px;
+    }
+
+    .recent-transaction {
+        gap: 16px;
+    }
+
+    .recent-transaction-amount {
+        white-space: nowrap;
+    }
 }
 
 .dashboard-chart-card {
@@ -155,4 +167,72 @@
     grid-template-columns: 1.5fr 1fr;
     gap: 20px;
     margin-top: 20px;
+}
+
+.recent-transactions-card {
+    margin-top: 20px;
+    padding: 28px;
+
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 22px;
+
+    background: rgba(12, 25, 22, 0.72);
+
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.03);
+
+    backdrop-filter: blur(14px);
+}
+
+.recent-transactions-header {
+    margin-bottom: 20px;
+}
+
+.recent-transactions-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.recent-transaction {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 16px 0;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.recent-transaction:last-child {
+    border-bottom: none;
+}
+
+.recent-transaction-info {
+    min-width: 0;
+}
+
+.recent-transaction-name {
+    color: #f5f7f6;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.recent-transaction-date {
+    margin-top: 5px;
+    color: #74847f;
+    font-size: 12px;
+}
+
+.recent-transaction-amount {
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.recent-transaction-amount.income {
+    color: #20d9a4;
+}
+
+.recent-transaction-amount.expense {
+    color: #ff7b8a;
 }

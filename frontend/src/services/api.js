@@ -119,3 +119,18 @@ export const createTransaction = async ({
 
     return data;
 };
+
+export const deleteTransaction = async (id) => {
+    const response = await fetch(`${API_URL}/transactions/${id}`, {
+        method: "DELETE",
+        headers: getAuthHeaders(),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || "Failed to delete transaction");
+    }
+
+    return data;
+};

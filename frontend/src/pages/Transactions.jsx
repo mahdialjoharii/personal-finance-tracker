@@ -4,6 +4,7 @@ import {
     getCategories,
     getIncomeSources,
     createTransaction,
+    deleteTransaction,
 } from "../services/api";
 import Navbar from "../components/Navbar";
 import "./Transactions.css";
@@ -41,6 +42,28 @@ function Transactions() {
 
         } catch (error) {
             console.error("Create transaction error:", error);
+        }
+    };
+
+    const handleDelete = async (id) => {
+        const confirmed = window.confirm(
+            "Are you sure you want to delete this transaction?"
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+            await deleteTransaction(id);
+
+            setTransactions((prev) =>
+                prev.filter((transaction) => transaction.id !== id)
+            );
+
+            console.log("Transaction deleted:", id);
+        } catch (error) {
+            console.error("Delete transaction error:", error);
         }
     };
 
@@ -267,6 +290,14 @@ function Transactions() {
                         >
                             {transaction.type === "INCOME" ? "+" : "-"}${transaction.amount}
                         </span>
+
+                        <button
+                            type="button"
+                            className="transaction-delete-button"
+                            onClick={() => handleDelete(transaction.id)}
+                        >
+                            Delete
+                        </button>
                     </article>
                 ))}
             </section>

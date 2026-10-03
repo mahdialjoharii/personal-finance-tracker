@@ -62,7 +62,7 @@
         background 0.2s ease;
 
 
-    margin-left: auto;    
+    margin-left: auto;
     flex-shrink: 0;
 }
 
@@ -90,7 +90,7 @@
 
 .transaction-card {
     display: grid;
-    grid-template-columns: 1.5fr 1fr 1fr auto;
+    grid-template-columns: 1.5fr 1fr 1fr auto auto;
     align-items: center;
     gap: 20px;
 
@@ -456,34 +456,66 @@
 }
 
 .transaction-submit-button {
-  width: 100%;
-  height: 52px;
-  margin-top: 26px;
+    width: 100%;
+    height: 52px;
+    margin-top: 26px;
 
-  border: 0;
-  border-radius: 13px;
+    border: 0;
+    border-radius: 13px;
 
-  background: #20d9a4;
-  color: #06110e;
+    background: #20d9a4;
+    color: #06110e;
 
-  cursor: pointer;
+    cursor: pointer;
 
-  font: inherit;
-  font-size: 14px;
-  font-weight: 800;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 800;
 
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
-    background 0.2s ease;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
 }
 
 .transaction-submit-button:hover {
-  transform: translateY(-2px);
-  background: #38e5b3;
-  box-shadow: 0 12px 28px rgba(32, 217, 164, 0.16);
+    transform: translateY(-2px);
+    background: #38e5b3;
+    box-shadow: 0 12px 28px rgba(32, 217, 164, 0.16);
 }
 
 .transaction-submit-button:active {
-  transform: translateY(0);
+    transform: translateY(0);
+}
+
+.transaction-delete-button {
+    height: 36px;
+    padding: 0 14px;
+
+    border: 1px solid rgba(255, 123, 138, 0.18);
+    border-radius: 10px;
+
+    background: rgba(255, 123, 138, 0.06);
+    color: #ff7b8a;
+
+    cursor: pointer;
+
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.transaction-delete-button:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 123, 138, 0.12);
+    border-color: rgba(255, 123, 138, 0.35);
+}
+
+.transaction-delete-button:active {
+    transform: translateY(0);
 }

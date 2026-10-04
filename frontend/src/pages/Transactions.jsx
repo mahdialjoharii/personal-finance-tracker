@@ -71,8 +71,6 @@ function Transactions() {
                     transactionData
                 );
 
-                console.log("Transaction updated:", data);
-
                 setSuccessMessage("Transaction updated successfully.");
 
                 setTimeout(() => {
@@ -88,8 +86,6 @@ function Transactions() {
                 );
             } else {
                 const data = await createTransaction(transactionData);
-
-                console.log("Transaction created:", data);
 
                 setSuccessMessage("Transaction added successfully.");
 
@@ -175,9 +171,6 @@ function Transactions() {
             try {
                 const data = await getTransactions();
 
-                console.log("Transactions data:", data);
-                console.log("First transaction date:", data[0]?.date);
-
                 setTransactions(data);
             } catch (error) {
                 console.error("Transactions error:", error);
@@ -194,8 +187,6 @@ function Transactions() {
             try {
                 const data = await getCategories();
 
-                console.log("Categories data:", data);
-
                 setCategories(data);
             } catch (error) {
                 console.error("Categories error:", error);
@@ -207,8 +198,6 @@ function Transactions() {
         const loadIncomeSources = async () => {
             try {
                 const data = await getIncomeSources();
-
-                console.log("Income sources data:", data);
 
                 setIncomeSources(data);
             } catch (error) {

@@ -29,9 +29,9 @@ app.listen(PORT, async () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 
     try {
-        const result = await pool.query("SELECT NOW()");
+        await pool.query("SELECT NOW()");
         console.log("Database connected successfully!");
-        
+
     } catch (error) {
         console.error("Database connection failed:", error.message);
     }

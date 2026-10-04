@@ -76,32 +76,6 @@
     letter-spacing: -0.04em;
 }
 
-@media (max-width: 800px) {
-    .dashboard-page {
-        padding: 32px 24px;
-    }
-
-    .stats-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .dashboard-charts-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .recent-transactions-card {
-        padding: 22px;
-    }
-
-    .recent-transaction {
-        gap: 16px;
-    }
-
-    .recent-transaction-amount {
-        white-space: nowrap;
-    }
-}
-
 .dashboard-chart-card {
     margin-top: 20px;
     padding: 28px;
@@ -271,4 +245,30 @@
 
 .dashboard-error-message button:hover {
     opacity: 0.85;
+}
+
+@media (max-width: 800px) {
+    .dashboard-page {
+        padding: 32px 24px;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-charts-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .recent-transactions-card {
+        padding: 22px;
+    }
+
+    .recent-transaction {
+        gap: 16px;
+    }
+
+    .recent-transaction-amount {
+        white-space: nowrap;
+    }
 }

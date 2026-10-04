@@ -26,7 +26,6 @@ function Login() {
         event.preventDefault();
 
         setSuccessMessage("");
-
         setError("");
 
         if (!email.trim() || !password) {

@@ -89,25 +89,25 @@ function Dashboard() {
         ],
     };
 
+    const loadDashboard = async () => {
+        setLoading(true);
+
+        try {
+            const data = await getDashboard();
+
+            setDashboardError("");
+            setDashboard(data);
+        } catch (error) {
+            console.error("Dashboard error:", error);
+            setDashboardError(
+                error.message || "Failed to load dashboard data."
+            );
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const loadDashboard = async () => {
-            setLoading(true);
-
-            try {
-                const data = await getDashboard();
-                
-                setDashboardError("");
-                setDashboard(data);
-            } catch (error) {
-                console.error("Dashboard error:", error);
-                setDashboardError(
-                    error.message || "Failed to load dashboard data."
-                );
-            } finally {
-                setLoading(false);
-            }
-        };
-
         loadDashboard();
     }, []);
 

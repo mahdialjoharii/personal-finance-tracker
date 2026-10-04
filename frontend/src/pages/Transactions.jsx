@@ -32,7 +32,6 @@ function Transactions() {
     const handleSubmit = async () => {
         setError("");
         setSuccessMessage("");
-        setSaving(true);
 
         if (!amount || Number(amount) <= 0) {
             setError("Please enter a valid amount.");
@@ -54,6 +53,8 @@ function Transactions() {
             return;
         }
 
+        setSaving(true);
+
         try {
             const transactionData = {
                 amount: Number(amount),
@@ -66,7 +67,7 @@ function Transactions() {
             };
 
             if (editingTransaction) {
-                const data = await updateTransaction(
+                await updateTransaction(
                     editingTransaction.id,
                     transactionData
                 );
@@ -171,7 +172,11 @@ function Transactions() {
             try {
                 const data = await getTransactions();
 
-                setTransactions(data);
+                setTransactions(
+                    data.sort((a, b) => {
+                        return b.date.localeCompare(a.date);
+                    })
+                );
             } catch (error) {
                 console.error("Transactions error:", error);
 

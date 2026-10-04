@@ -66,7 +66,7 @@ function Register() {
 
         setLoading(true);
         try {
-            const data = await registerUser(
+            await registerUser(
                 name.trim(),
                 email.trim(),
                 password

@@ -5,8 +5,37 @@ const getAuthHeaders = () => {
 
     return {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        ...(token && {
+            Authorization: `Bearer ${token}`,
+        }),
     };
+};
+
+const handleAuthError = (response) => {
+    if (response.status === 401 || response.status === 403) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+
+        window.location.href = "/login";
+
+        return true;
+    }
+
+    return false;
+};
+
+const handleResponse = async (response, defaultMessage) => {
+    const data = await response.json();
+
+    if (!response.ok) {
+        if (handleAuthError(response)) {
+            return null;
+        }
+
+        throw new Error(data.message || defaultMessage);
+    }
+
+    return data;
 };
 
 export const loginUser = async (email, password) => {
@@ -36,13 +65,10 @@ export const getDashboard = async () => {
         headers: getAuthHeaders(),
     });
 
-    const data = await response.json();
-
-    if (!response.ok) {
-        throw new Error(data.message || "Failed to fetch dashboard");
-    }
-
-    return data;
+    return handleResponse(
+        response,
+        "Failed to fetch dashboard"
+    );
 };
 
 export const getTransactions = async () => {
@@ -51,13 +77,10 @@ export const getTransactions = async () => {
         headers: getAuthHeaders(),
     });
 
-    const data = await response.json();
-
-    if (!response.ok) {
-        throw new Error(data.message || "Failed to fetch transactions");
-    }
-
-    return data;
+    return handleResponse(
+        response,
+        "Failed to fetch transactions"
+    );
 };
 
 export const getCategories = async () => {
@@ -66,13 +89,10 @@ export const getCategories = async () => {
         headers: getAuthHeaders(),
     });
 
-    const data = await response.json();
-
-    if (!response.ok) {
-        throw new Error(data.message || "Failed to fetch categories");
-    }
-
-    return data;
+    return handleResponse(
+        response,
+        "Failed to fetch categories"
+    );
 };
 
 export const getIncomeSources = async () => {
@@ -81,13 +101,10 @@ export const getIncomeSources = async () => {
         headers: getAuthHeaders(),
     });
 
-    const data = await response.json();
-
-    if (!response.ok) {
-        throw new Error(data.message || "Failed to fetch income sources");
-    }
-
-    return data;
+    return handleResponse(
+        response,
+        "Failed to fetch income sources"
+    );
 };
 
 export const createTransaction = async ({
@@ -111,13 +128,10 @@ export const createTransaction = async ({
         }),
     });
 
-    const data = await response.json();
-
-    if (!response.ok) {
-        throw new Error(data.message || "Failed to create transaction");
-    }
-
-    return data;
+    return handleResponse(
+        response,
+        "Failed to create transaction"
+    );
 };
 
 export const deleteTransaction = async (id) => {
@@ -126,32 +140,23 @@ export const deleteTransaction = async (id) => {
         headers: getAuthHeaders(),
     });
 
-    const data = await response.json();
-
-    if (!response.ok) {
-        throw new Error(data.message || "Failed to delete transaction");
-    }
-
-    return data;
+    return handleResponse(
+        response,
+        "Failed to delete transaction"
+    );
 };
 
 export const updateTransaction = async (id, transactionData) => {
     const response = await fetch(`${API_URL}/transactions/${id}`, {
         method: "PUT",
-        headers: {
-            ...getAuthHeaders(),
-            "Content-Type": "application/json",
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify(transactionData),
     });
 
-    const data = await response.json();
-
-    if (!response.ok) {
-        throw new Error(data.message || "Failed to update transaction");
-    }
-
-    return data;
+    return handleResponse(
+        response,
+        "Failed to update transaction"
+    );
 };
 
 export const registerUser = async (name, email, password) => {

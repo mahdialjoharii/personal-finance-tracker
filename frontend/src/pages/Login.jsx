@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./Login.css";
 import { loginUser } from "../services/api";
@@ -16,6 +16,12 @@ function Login() {
         location.state?.success || ""
     );
 
+    useEffect(() => {
+        if (location.state?.success) {
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    }, [location.state]);
+
     const handleSubmit = async (event) => {
         event.preventDefault();
 
@@ -23,16 +29,33 @@ function Login() {
 
         setError("");
 
-        if (!email || !password) {
+        if (!email.trim() || !password) {
             setError("Email and password are required.");
+            return;
+        }
+
+        if (!email.trim().includes("@")) {
+            setError("Please enter a valid email address.");
+            return;
+        }
+
+        if (email.trim().length > 255) {
+            setError("Email must be 255 characters or less.");
             return;
         }
 
         setLoading(true);
         try {
-            const data = await loginUser(email, password);
+            const data = await loginUser(email.trim(), password);
 
-            console.log("Login successful:", data);
+            if (
+                typeof data.token !== "string" ||
+                !data.token.trim() ||
+                typeof data.user !== "object" ||
+                data.user === null
+            ) {
+                throw new Error("Invalid login response.");
+            }
 
             localStorage.setItem("token", data.token);
             localStorage.setItem("user", JSON.stringify(data.user));

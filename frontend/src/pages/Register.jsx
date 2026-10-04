@@ -7,6 +7,7 @@ function Register() {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
@@ -18,8 +19,33 @@ function Register() {
 
         setError("");
 
-        if (!name || !email || !password) {
-            setError("Name, email, and password are required.");
+        if (
+            !name.trim() ||
+            !email.trim() ||
+            !password ||
+            !confirmPassword
+        ) {
+            setError("All fields are required.");
+            return;
+        }
+
+        if (name.trim().length < 2) {
+            setError("Name must be at least 2 characters.");
+            return;
+        }
+
+        if (name.trim().length > 100) {
+            setError("Name must be 100 characters or less.");
+            return;
+        }
+
+        if (!email.trim().includes("@")) {
+            setError("Please enter a valid email address.");
+            return;
+        }
+
+        if (email.trim().length > 255) {
+            setError("Email must be 255 characters or less.");
             return;
         }
 
@@ -28,11 +54,23 @@ function Register() {
             return;
         }
 
+        if (password.length > 128) {
+            setError("Password must be 128 characters or less.");
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            setError("Passwords do not match.");
+            return;
+        }
+
         setLoading(true);
         try {
-            const data = await registerUser(name, email, password);
-
-            console.log("Registration successful:", data);
+            const data = await registerUser(
+                name.trim(),
+                email.trim(),
+                password
+            );
 
             navigate("/login", {
                 state: {
@@ -103,6 +141,20 @@ function Register() {
                             >
                                 {showPassword ? "Hide" : "Show"}
                             </button>
+                        </div>
+                    </div>
+
+                    <div className="form-field">
+                        <label htmlFor="confirmPassword">Confirm Password</label>
+
+                        <div className="password-input-wrapper">
+                            <input
+                                id="confirmPassword"
+                                type={showPassword ? "text" : "password"}
+                                placeholder="••••••••"
+                                value={confirmPassword}
+                                onChange={(event) => setConfirmPassword(event.target.value)}
+                            />
                         </div>
                     </div>
 

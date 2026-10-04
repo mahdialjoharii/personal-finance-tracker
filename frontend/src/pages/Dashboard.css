@@ -236,3 +236,39 @@
 .recent-transaction-amount.expense {
     color: #ff7b8a;
 }
+
+.dashboard-message {
+    width: 100%;
+    padding: 24px;
+    border-radius: 12px;
+    background: #101a17;
+    border: 1px solid #24332f;
+    color: #c9d4d0;
+    text-align: center;
+    font-size: 15px;
+}
+
+.dashboard-error-message {
+    border-color: #6b2f2f;
+    color: #ffb4b4;
+}
+
+.dashboard-error-message p {
+    margin: 0 0 16px;
+}
+
+.dashboard-error-message button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    background: #d4af37;
+    color: #07100e;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.dashboard-error-message button:hover {
+    opacity: 0.85;
+}

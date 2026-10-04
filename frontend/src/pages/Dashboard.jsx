@@ -29,6 +29,8 @@ ChartJS.register(
 
 function Dashboard() {
     const [dashboard, setDashboard] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [dashboardError, setDashboardError] = useState("");
 
     const user = JSON.parse(localStorage.getItem("user"));
 
@@ -89,14 +91,20 @@ function Dashboard() {
 
     useEffect(() => {
         const loadDashboard = async () => {
+            setLoading(true);
+
             try {
                 const data = await getDashboard();
-
-                console.log("Dashboard data:", data);
-
+                
+                setDashboardError("");
                 setDashboard(data);
             } catch (error) {
                 console.error("Dashboard error:", error);
+                setDashboardError(
+                    error.message || "Failed to load dashboard data."
+                );
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -115,7 +123,22 @@ function Dashboard() {
                 <p>Here’s an overview of your finances.</p>
             </header>
 
-            {dashboard && (
+            {loading ? (
+                <div className="dashboard-message">
+                    Loading dashboard...
+                </div>
+            ) : dashboardError ? (
+                <div className="dashboard-message dashboard-error-message">
+                    <p>{dashboardError}</p>
+
+                    <button
+                        type="button"
+                        onClick={loadDashboard}
+                    >
+                        Retry
+                    </button>
+                </div>
+            ) : dashboard ? (
                 <>
                     <section className="stats-grid">
                         <StatCard
@@ -264,8 +287,8 @@ function Dashboard() {
 
                                     <div
                                         className={`recent-transaction-amount ${transaction.type === "INCOME"
-                                                ? "income"
-                                                : "expense"
+                                            ? "income"
+                                            : "expense"
                                             }`}
                                     >
                                         {transaction.type === "INCOME" ? "+" : "-"}$
@@ -276,7 +299,7 @@ function Dashboard() {
                         </div>
                     </section>
                 </>
-            )}
+            ) : null}
         </main>
     );
 }

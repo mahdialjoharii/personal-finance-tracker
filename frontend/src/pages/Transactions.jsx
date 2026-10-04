@@ -12,6 +12,9 @@ import "./Transactions.css";
 
 function Transactions() {
     const [transactions, setTransactions] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [transactionsError, setTransactionsError] = useState("");
     const [showForm, setShowForm] = useState(false);
     const [type, setType] = useState("EXPENSE");
     const [amount, setAmount] = useState("");
@@ -23,9 +26,13 @@ function Transactions() {
     const [description, setDescription] = useState("");
     const [date, setDate] = useState("");
     const [error, setError] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
+    const [deleteError, setDeleteError] = useState("");
 
     const handleSubmit = async () => {
         setError("");
+        setSuccessMessage("");
+        setSaving(true);
 
         if (!amount || Number(amount) <= 0) {
             setError("Please enter a valid amount.");
@@ -66,6 +73,12 @@ function Transactions() {
 
                 console.log("Transaction updated:", data);
 
+                setSuccessMessage("Transaction updated successfully.");
+
+                setTimeout(() => {
+                    setSuccessMessage("");
+                }, 3000);
+
                 const updatedTransactions = await getTransactions();
 
                 setTransactions(
@@ -77,6 +90,12 @@ function Transactions() {
                 const data = await createTransaction(transactionData);
 
                 console.log("Transaction created:", data);
+
+                setSuccessMessage("Transaction added successfully.");
+
+                setTimeout(() => {
+                    setSuccessMessage("");
+                }, 3000);
 
                 setTransactions((prev) =>
                     [...prev, data.transaction].sort((a, b) => {
@@ -92,6 +111,8 @@ function Transactions() {
             console.error("Save transaction error:", error);
 
             setError(error.message);
+        } finally {
+            setSaving(false);
         }
     };
 
@@ -128,15 +149,24 @@ function Transactions() {
         }
 
         try {
+            setDeleteError("");
+            setSuccessMessage("");
+
             await deleteTransaction(id);
 
             setTransactions((prev) =>
                 prev.filter((transaction) => transaction.id !== id)
             );
 
-            console.log("Transaction deleted:", id);
+            setSuccessMessage("Transaction deleted successfully.");
+
+            setTimeout(() => {
+                setSuccessMessage("");
+            }, 3000);
         } catch (error) {
             console.error("Delete transaction error:", error);
+
+            setDeleteError(error.message);
         }
     };
 
@@ -151,6 +181,10 @@ function Transactions() {
                 setTransactions(data);
             } catch (error) {
                 console.error("Transactions error:", error);
+
+                setTransactionsError(error.message);
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -206,6 +240,18 @@ function Transactions() {
                     Add Transaction
                 </button>
             </header>
+
+            {successMessage && (
+                <div className="transactions-success-message">
+                    {successMessage}
+                </div>
+            )}
+
+            {deleteError && (
+                <div className="transactions-message transactions-error-message">
+                    {deleteError}
+                </div>
+            )}
 
             {showForm && (
                 <div className="transaction-form-card">
@@ -373,58 +419,75 @@ function Transactions() {
                         type="button"
                         className="transaction-submit-button"
                         onClick={handleSubmit}
+                        disabled={saving}
                     >
-                        {editingTransaction
-                            ? "Update Transaction"
-                            : type === "EXPENSE"
-                                ? "Add Expense"
-                                : "Add Income"}
+                        {saving
+                            ? "Saving..."
+                            : editingTransaction
+                                ? "Update Transaction"
+                                : type === "EXPENSE"
+                                    ? "Add Expense"
+                                    : "Add Income"}
                     </button>
 
                 </div>
             )}
 
             <section className="transactions-list">
-                {transactions.map((transaction) => (
-                    <article className="transaction-card" key={transaction.id}>
-                        <span className="transaction-description">
-                            {transaction.description || "No description"}
-                        </span>
+                {loading ? (
+                    <div className="transactions-message">
+                        Loading transactions...
+                    </div>
+                ) : transactionsError ? (
+                    <div className="transactions-message transactions-error-message">
+                        {transactionsError}
+                    </div>
+                ) : transactions.length === 0 ? (
+                    <div className="transactions-message">
+                        No transactions yet. Add your first transaction to get started.
+                    </div>
+                ) : (
+                    transactions.map((transaction) => (
+                        <article className="transaction-card" key={transaction.id}>
+                            <span className="transaction-description">
+                                {transaction.description || "No description"}
+                            </span>
 
-                        <span className="transaction-category">
-                            {transaction.type === "INCOME"
-                                ? transaction.income_source_name
-                                : transaction.category_name}
-                        </span>
+                            <span className="transaction-category">
+                                {transaction.type === "INCOME"
+                                    ? transaction.income_source_name
+                                    : transaction.category_name}
+                            </span>
 
-                        <span className="transaction-date">
-                            {transaction.date}
-                        </span>
+                            <span className="transaction-date">
+                                {transaction.date}
+                            </span>
 
-                        <span
-                            className={`transaction-amount ${transaction.type === "INCOME" ? "income" : "expense"
-                                }`}
-                        >
-                            {transaction.type === "INCOME" ? "+" : "-"}${transaction.amount}
-                        </span>
+                            <span
+                                className={`transaction-amount ${transaction.type === "INCOME" ? "income" : "expense"
+                                    }`}
+                            >
+                                {transaction.type === "INCOME" ? "+" : "-"}${transaction.amount}
+                            </span>
 
-                        <button
-                            type="button"
-                            className="transaction-edit-button"
-                            onClick={() => handleEdit(transaction)}
-                        >
-                            Edit
-                        </button>
+                            <button
+                                type="button"
+                                className="transaction-edit-button"
+                                onClick={() => handleEdit(transaction)}
+                            >
+                                Edit
+                            </button>
 
-                        <button
-                            type="button"
-                            className="transaction-delete-button"
-                            onClick={() => handleDelete(transaction.id)}
-                        >
-                            Delete
-                        </button>
-                    </article>
-                ))}
+                            <button
+                                type="button"
+                                className="transaction-delete-button"
+                                onClick={() => handleDelete(transaction.id)}
+                            >
+                                Delete
+                            </button>
+                        </article>
+                    ))
+                )}
             </section>
         </main>
     );

@@ -565,3 +565,59 @@
     font-size: 13px;
     font-weight: 600;
 }
+
+.transactions-message {
+    padding: 40px 20px;
+
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+
+    background: rgba(255, 255, 255, 0.02);
+
+    color: #74847f;
+
+    text-align: center;
+    font-size: 14px;
+}
+
+.transactions-error-message {
+    border-color: rgba(255, 123, 138, 0.16);
+
+    background: rgba(255, 123, 138, 0.06);
+
+    color: #ff7b8a;
+}
+
+.transactions-success-message {
+    margin-bottom: 20px;
+    padding: 14px 18px;
+
+    border: 1px solid rgba(74, 222, 128, 0.2);
+    border-radius: 10px;
+
+    background: rgba(74, 222, 128, 0.08);
+
+    color: #4ade80;
+
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.transaction-submit-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.transaction-submit-button:disabled:hover {
+    background: #20d9a4;
+    box-shadow: none;
+}
+
+@media (max-width: 500px) {
+
+    .transaction-edit-button,
+    .transaction-delete-button {
+        width: 100%;
+    }
+}
